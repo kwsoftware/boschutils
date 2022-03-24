@@ -6,7 +6,7 @@ const { body, validationResult } = require('express-validator');
 // Create a User using: POST "/api/auth/". Doesn't require Auth
 router.post('/', [
     body('name', 'Name should be at least 5 characters').isLength({ min: 5 }),
-    body('empno', 'enter a valid Employee Number').isNumeric, isLength({ 8}),
+    body('empno', 'enter a valid Employee Number').isLength({min: 8}),
     body('password', 'Password should be at least 5 Characters').isLength({ min: 5 })
 ], (req, res) => {
     const errors = validationResult(req);
@@ -17,7 +17,9 @@ router.post('/', [
         name: req.body.name,
         empno: req.body.empno,
         password: req.body.password,
-    }).then(user => res.json(user));
+    }).then(user => res.json(user))
+    .catch(err => {console.log(err)
+    res.json({error:'please enter unique value for empno',message:err.message})});
 
 });
 
