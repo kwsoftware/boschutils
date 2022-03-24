@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const mongoURL = "mongodb://localhost/mongodata";
+const mongoURL = "mongodb://localhost/iboschUtils";
 
 const connectToMongo = ()=>{
     mongoose.connect(mongoURL,()=>{
