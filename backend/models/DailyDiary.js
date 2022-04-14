@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const DailyDiarySchema = new Schema({
+    userid:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+
+    },
     date:{
         type: Date,
         default: Date.now
