@@ -40,5 +40,63 @@ router.post('/addrecord', fetchuser, [
         res.status(500).send('Internal Server error');
     }
 } )
+// Route 3 : Update existing record using: PUT "/api/auth/updaterecord". Login required
 
+router.put('/updaterecord/:id', fetchuser,async (req, res)=>{
+    const {shift, machineno, faultdescription, action, actionby, status, remark} = req.body;
+    try {
+        //Create a newRecord object
+        const newRecord = {};
+        if(shift){newRecord.shift = shift};
+        if(machineno){newRecord.machineno = machineno};
+        if(faultdescription){newRecord.faultdescription = faultdescription};
+        if(action){newRecord.action = action};
+        if(actionby){newRecord.actionby = actionby};
+        if(status){newRecord.status = status};
+        if(remark){newRecord.remark = remark};
+    
+        // find the record to be updated and update it.
+        let record = await DailyDiary.findById(req.params.id);
+        if(!record){return res.status(404).send("not found")};
+        // console.log(JSON.stringify(record.userid).toString())
+        // console.log((req.user.id).toString())
+    
+        if(record.userid.toString() !== req.user.id){
+            return res.status(401).send("not allowed");
+        }
+    
+        record = await DailyDiary.findByIdAndUpdate(req.params.id,{$set: newRecord},{new:true});
+        res.json(record);
+        
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Internal Server error');
+    }
+
+
+})
+// Route 4 : delete existing record using: DELETE "/api/dailydiary/deleterecord". Login required
+
+router.delete('/deleterecord/:id', fetchuser,async (req, res)=>{
+    try {
+        // find the record to be deleted and delete it.
+        let record = await DailyDiary.findById(req.params.id);
+        if(!record){return res.status(404).send("not found")};
+        // console.log(JSON.stringify(record.userid).toString())
+        // console.log((req.user.id).toString())
+    
+        if(record.userid.toString() !== req.user.id){
+            return res.status(401).send("not allowed");
+        }
+    
+        record = await DailyDiary.findByIdAndDelete(req.params.id);
+        res.json({"Success":"Record has been deleted",record:record});
+        
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Internal Server error');
+    }
+
+
+})
 module.exports = router
